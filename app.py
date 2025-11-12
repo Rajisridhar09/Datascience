@@ -2,12 +2,12 @@ import streamlit as st #framework building interactive web application directly 
 import pandas as pd
 import joblib
 
-model = joblib.load("bigmart_model.pkl")
+model = joblib.load("houseprice_model.pkl")
 
-st.set_page_config(page_title = "BigMart Sales Prediction",page_icon="🛒", layout = 'centered')
+st.set_page_config(page_title = "House Price  Prediction",page_icon="🛒", layout = 'centered')
 
-st.title("🛒 Bigmart Sales Prediction APP")
-st.markdown("""This app is going to predict ***Item Outlet Sales*** based on the 
+st.title("🛒 House Price Prediction APP")
+st.markdown("""This app is going to predict ***House Price*** based on the 
 input values I provide, Once done click ***Predict Sales*** button""")
 
 
@@ -15,28 +15,27 @@ with st.form("input_form"):
     st.header("Enter Product & Outlet Details")
     col1, col2 = st.columns(2)
     with col1: 
-        item_weight = st.number_input("Item Weight", min_value=0.0, step= 0.1)
-        item_visibility = st.number_input("Item Visibility", min_value=0.0, step= 0.001)
-        item_mrp = st.number_input("Item MRP", min_value=0.0, step= 0.5)
-        outlet_age = st.number_input("Outlet Age", min_value=0, step= 1)
-        outlet_location_score = st.selectbox("Outlet Location Score", [1,2,3])
+        OverallQual = st.number_input("OverallQual", min_value=0.0, step= 0.1)
+        GrLivArea = st.number_input("GrLivArea", min_value=0.0, step= 0.001)
+        GarageCars = st.selectbox("GarageCars",[0,1,2,3])
+        TotalBsmtSF = st.number_input("TotalBsmtSF", min_value=0, step= 1)
+        #1stFlrSF = st.number_input("Outlet Location Score",min_value=0.0, step= 0.1)
+        Flr1SF = st.number_input("1st Floor Square Feet", min_value=0.0, step=0.1)
 
+        FullBath = st.selectbox("FullBath",[0,1,2])
+        YearBuilt = st.number_input("YearBuilt", min_value=0.0, step= 0.5)
+        
     with col2: 
-        item_type =  st.text_input("Item Type (e.g 'Dairy', 'Meat')")
-        item_category = st.selectbox("Item Category", ["FD","DR","NC"])
-        outlet_size = st.selectbox("Outlet Size",['Small',"Medium","High"])
-        outlet_location_type = st.selectbox("Outlet Location Type", ['Tier 1','Tier 2','Tier 3'])
-        outlet_type = st.selectbox("Outlet Type", ['Supermarket Type1','Grocery Store','Supermarket Type2',"Supermarket Type3	"])
-        Outlet_Identifier = st.selectbox("Outlet Identifier",['OUT027',
-        'OUT013',
-        'OUT035',
-        'OUT049',
-        'OUT046',
-        'OUT045',
-        'OUT018',
-        'OUT017',
-        'OUT010',
-        'OUT019'])
+        Neighborhood =  st.selectbox("Neighborhood",['CollgCr','Veenker','Mitchel','Somerst','NWAmes','BrkSide'])
+        ExterQual = st.selectbox("ExterQual", ["Gd","TA","Ex",'Fa'])
+        KitchenQual = st.selectbox("KitchenQual",["Gd","TA","Ex",'Fa'])
+        BsmtQual = st.selectbox("BsmtQual", ["Gd","TA","Ex",'Fa'])
+        GarageFinish = st.selectbox("GarageFinish", ['RFn','Unf','Fin','NA'])
+        Foundation = st.selectbox("Foundation",['PConc','CBlock','BrkTil','Wood','Slab'])
+        GarageType =  st.selectbox("GarageType",['Attchd','Detchd','BuiltIn'])
+        HeatingQC = st.selectbox("HeatingQC", ["Gd","TA","Ex",'Fa'])
+        BsmtFinType1 = st.selectbox("BsmtFinType1",['GLQ',"ALQ","Unf",'LwQ','NA'])
+        MSZoning = st.selectbox("MSZoning", ['RM','RL','FV'])
 
     # values = st.text_input("Enter multiple MPRs")
     # m_values = [float(v) for v in values.split(',')]
@@ -48,17 +47,25 @@ with st.form("input_form"):
 
 if submitted: 
     input_df = pd.DataFrame({
-    "Item_Weight":[item_weight],
-    "Item_Visibility":[item_visibility],
-    "Item_MRP":[item_mrp],
-    "Outlet_age":[outlet_age],
-    'Outlet_Location_Score': [outlet_location_score],
-    'Item_Type': [item_type],
-    'Item_Category': [item_category],
-    'Outlet_Size': [outlet_size],
-    'Outlet_Location_Type': [outlet_location_type],
-    'Outlet_Type': [outlet_type],
-    'Outlet_Identifier': [Outlet_Identifier]})
+    "OverallQual":[OverallQual],
+    "GrLivArea":[GrLivArea],
+    "GarageCars":[GarageCars],
+    "TotalBsmtSF":[TotalBsmtSF],
+    '1stFlrSF': [Flr1SF],
+    'FullBath': [FullBath],
+    'YearBuilt': [YearBuilt],
+    'Neighborhood': [Neighborhood],
+    'ExterQual': [ExterQual],
+    'KitchenQual': [KitchenQual],
+    'BsmtQual': [BsmtQual],
+    'GarageFinish': [GarageFinish],
+    'Foundation': [Foundation],
+    'GarageType': [GarageType],
+    'HeatingQC': [HeatingQC],
+    'BsmtFinType1': [BsmtFinType1],
+    'MSZoning': [MSZoning]
+
+    })
 
     pred = model.predict(input_df)[0]
     st.success(f" Predicted Sales: Rs. {pred:.2f}")
